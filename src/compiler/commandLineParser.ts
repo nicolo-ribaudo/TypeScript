@@ -1442,6 +1442,20 @@ const commandOptionsWithoutBuild: CommandLineOption[] = [
         defaultValueDescription: false,
     },
     {
+        name: "skipLibCheckPaths",
+        type: "list",
+        element: {
+            name: "skipLibCheckPaths",
+            type: "string",
+            isFilePath: true,
+        },
+        // We need to store these to determine whether `lib` files need to be rechecked
+        affectsBuildInfo: true,
+        category: Diagnostics.Completeness,
+        description: Diagnostics.Skip_type_checking_all_d_ts_files,
+        defaultValueDescription: false,
+    },
+    {
         name: "allowUnusedLabels",
         type: "boolean",
         affectsBindDiagnostics: true,

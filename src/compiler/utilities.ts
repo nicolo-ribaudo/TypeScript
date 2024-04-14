@@ -9880,15 +9880,27 @@ export function rangeOfTypeParameters(sourceFile: SourceFile, typeParameters: No
 /** @internal */
 export interface HostWithIsSourceOfProjectReferenceRedirect {
     isSourceOfProjectReferenceRedirect(fileName: string): boolean;
+    useCaseSensitiveFileNames?(): boolean;
 }
 /** @internal */
 export function skipTypeChecking(sourceFile: SourceFile, options: CompilerOptions, host: HostWithIsSourceOfProjectReferenceRedirect) {
     // If skipLibCheck is enabled, skip reporting errors if file is a declaration file.
     // If skipDefaultLibCheck is enabled, skip reporting errors if file contains a
     // '/// <reference no-default-lib="true"/>' directive.
-    return (options.skipLibCheck && sourceFile.isDeclarationFile ||
-        options.skipDefaultLibCheck && sourceFile.hasNoDefaultLib) ||
-        host.isSourceOfProjectReferenceRedirect(sourceFile.fileName);
+    if (
+        options.skipDefaultLibCheck && sourceFile.hasNoDefaultLib ||
+        host.isSourceOfProjectReferenceRedirect(sourceFile.fileName)
+    ) {
+        return true;
+    }
+    if (sourceFile.isDeclarationFile) {
+        if (Array.isArray(options.skipLibCheckPaths)) {
+            const re = getRegularExpressionForWildcard(options.skipLibCheckPaths, options.pathsBasePath!, "exclude");
+            return re && getRegexFromPattern(re, hostUsesCaseSensitiveFileNames(host)).test(sourceFile.resolvedPath);
+        }
+        return options.skipLibCheck;
+    }
+    return false;
 }
 
 /** @internal */

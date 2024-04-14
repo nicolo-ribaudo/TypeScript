@@ -7249,6 +7249,7 @@ export interface CompilerOptions {
     rootDir?: string;
     rootDirs?: string[];
     skipLibCheck?: boolean;
+    skipLibCheckPaths?: string[];
     skipDefaultLibCheck?: boolean;
     sourceMap?: boolean;
     sourceRoot?: string;
